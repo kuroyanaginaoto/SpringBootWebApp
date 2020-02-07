@@ -1,0 +1,871 @@
+(function (window, document, $, undefined) {
+  'use strict';
+
+  function barHide() {
+    var is = {
+      mobile: window.orientation !== 'undefined',
+      notPageLink: window.location.hash.indexOf('#') === -1,
+      notScroll: window.document.body.scrollTop === 0
+    };
+    if (is.mobile && is.notPageLink && is.notScroll) {
+      window.setTimeout(function () {
+        window.scrollTo(0, 1);
+      }, 4);
+    }
+  }
+
+  $(function () {
+    barHide();
+  });
+}(window, document, $));
+(function (window, document, $, undefined) {
+  'use strict';
+
+  var resizeWindow = function resizeWindow() {
+    $(window).bind('resize load', function () {
+      resizeEvent();
+    });
+  };
+  
+  var resizeEvent = function resizeEvent(){
+  //  $('html').css('zoom', $(window).width() / 320);
+		$('#main').css('zoom', $(window).width() / 320);
+		$('#siteHeader').css('zoom', $(window).width() / 320);
+		$('#siteFooter').css('zoom', $(window).width() / 320);
+  };
+  
+  window.resizeEvent = resizeEvent;
+  
+  // touchstartがあるか判定
+  var isTouch = 'ontouchstart' in window;
+  
+  // ハッシュで取得した位置へスクロール移動
+  function hashMove(){
+    var urlhash = window.location.hash.toString(),
+    hash = urlhash.slice(1, urlhash.lenght);
+    if (urlhash.indexOf('#') > -1) {
+      Deferred.next(resizeEvent)
+      .next(function(){
+         setTimeout(function() {
+         var elm = '#' + hash;
+         var elmTop = $(elm).offset().top;
+         window.scrollTo(0, elmTop - 80);
+        }, 1000);
+      });
+   }
+  }
+  
+  function hashMoveLink(self){
+    var url = $(self).attr('href');
+    var elmTop;
+    elmTop = $(url).offset().top;
+    window.scrollTo(0, elmTop - 80);
+    
+  }
+
+  // 特定ページでfooterの画像アイコンを変える
+  function changeFooterIcon() {
+    var pages = ['history', 'favorite', 'cart' , (/game\/index\.php|game\/.+\/search\.php|game\/.+\/result\.php/)];
+    var i = 0,
+        l = pages.length;
+    var url = window.location.href;
+    var specifiedPage, page;
+
+    function addCurrent(selecter) {
+      $(selecter).addClass('current');
+    }
+
+    for (; i < l; ++i) {
+      page = pages[i];
+      specifiedPage = new RegExp(page).test(url);
+
+      if (specifiedPage) {
+        addCurrent('#siteFooter ul li:nth-child(' + (i + 1) + ') a');
+      }
+    }
+  }
+  
+  function changeCartIcon() {
+    var url = window.location.href;
+    var cart = $('#siteFooter').find('#btncart');
+    if(url.indexOf('buy') > -1){
+      cart.removeClass('sell-cart');
+      cart.addClass('buy-cart');
+      cart.find('a').attr({'href':'/sp/buy_cart/cart.php'});
+    }
+  }
+
+  // フッターのボタンをタップした時に.activeを付ける
+  function addFooterActive() {
+    var $footerLink = $('#siteFooter li a');
+    var touchStartEvent = isTouch ? 'touchstart' : 'mousedown',
+        touchEndEvent = isTouch ? 'touchend' : 'mouseup';
+
+    $footerLink.on(touchStartEvent, function () {
+      $(this).addClass('active');
+    });
+    $footerLink.on(touchEndEvent, function () {
+      $(this).removeClass('active');
+    });
+  }
+
+  // disable soldout && still-not
+  function disableBtns() {
+    $('.soldout, .still-not').on('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    });
+  }
+
+  // toggle sell or buy
+  function tglTrade() {
+    var $sell = $('.btns.market > .btn.sell'),
+    $buy = $('.btns.market > .btn.buy');
+
+    $sell.on('click', function () {
+      $(this).addClass('select');
+      $buy.removeClass('select');
+      $('#trade').val('sell');
+    });
+
+    $buy.on('click', function () {
+      $(this).addClass('select');
+      $sell.removeClass('select');
+      $('#trade').val('buy');
+    });
+  }
+
+  // toggle calendar
+  function tglCalendar() {
+    var elm = {
+      month: $('.calendar > .month'),
+      calendar: $('.calendar > table')
+    },
+    current = {
+      month: elm.month.first(),
+      calendar: elm.calendar.first()
+    },
+    next = {
+      month: elm.month.last(),
+      calendar: elm.calendar.last()
+    };
+
+    (function init() {
+      current.month.show();
+      current.calendar.show();
+      next.month.hide();
+      next.calendar.hide();
+    }());
+
+    $('.next-month > a').on('click', function () {
+      current.month.hide();
+      current.calendar.hide();
+      next.month.show();
+      next.calendar.show();
+    });
+
+    $('.prev-month > a').on('click', function () {
+      current.month.show();
+      current.calendar.show();
+      next.month.hide();
+      next.calendar.hide();
+    });
+  }
+  
+  //トップの時のみメニューの表示を修正
+  function topHeaderMenu() {
+    if($('#top').length){
+      $('#siteFooter').css('z-index','9');
+    }
+  }
+
+  $(function () {
+    // fire
+    resizeWindow();
+    changeCartIcon();
+    changeFooterIcon();
+    addFooterActive();
+    disableBtns();
+    tglCalendar();
+    $('#sellcart-input .unit-radio [type="radio"]').on('click', function () {
+      tglDisplayStyle($(this), $('.image-reserve'));
+    });
+    tglTrade();
+    topHeaderMenu();
+    hashMove();
+    
+    $('a').on('click',function(e){
+      if($(this).attr('href') == '#'){
+        e.preventDefault();
+        window.scrollTo(0,1);
+      }else if($(this).attr('href').indexOf("#") > -1)　{
+        hashMoveLink(this);          
+      }
+    });
+    
+  });
+    
+}(window, document, $));
+(function (window, document, $, undefined) {
+  'use strict';
+  var slideDownMenu = function(){
+    var $menu = $('.header-menu');
+    if($('div.inner').attr('id')==='top' && document.body.scrollTop < 2 && !window.headerflag){
+      $menu.animate({
+        top: '95px'
+      },300,'ease-out',function(){
+        $('body').css('overflow-y','hidden');
+      });
+    }else{
+      $menu.animate({
+        top: '-10px'
+      },300,'ease-out',function(){
+        $('body').css('overflow-y','hidden');
+      });
+    }
+  };
+
+  var slideUpMenu = function(){
+    var $menu = $('.header-menu');
+
+    $menu.show().animate({
+      top: '-600px'
+    },300,'ease-in',function(){
+      $('body').css('overflow-y','auto');
+
+      $menu.hide();
+    });
+  };
+
+  $.fn.tglMenuIcon = function(){
+    $(this).toggleClass('on');
+  };
+
+  $.fn.slideMenu = function(){
+    var $this = $(this);
+    $this.hasClass('on')===true ? slideUpMenu() : slideDownMenu();
+    $this.tglMenuIcon();
+  };
+
+
+  $.fn.appendMenuElement = function(){
+    var menuDOM = '<div class="header-menu">'
+      + '<h2><img src="/sp/img/common/menu/title.png" alt="MENU" width="45" height="15" /></h2>'
+      + '<div class="container-menulist"><ul class="menu-list">'
+      + '<li><a href="/sp/game/ws/">ヴァイスシュヴァルツ</a></li>'
+      + '<li><a href="/sp/game/chaos/">ChaosTCG｜カオス</a></li>'
+      + '<li><a href="/sp/game/vg/">ヴァンガード</a></li>'
+      + '<li><a href="/sp/game/pm/">プレシャスメモリーズ</a></li>'
+      + '<li><a href="/sp/game/sentcg/">戦国大戦TCG</a></li>'
+      + '<li><a href="/sp/game/ll/">ラクエンロジック</a></li>'
+      + '<li><a href="/sp/game/bf/">バディファイト</a></li>'
+      + '<li><a href="/sp/game/zx/">Z/X -Zillions of enemy X-</a></li>'
+      + '<li><a href="/sp/game/wx/">WIXOSS｜ウィクロス</a></li>'
+      + '<li><a href="/sp/game/lo/">Lycee Overture</a></li>'
+      + '<li><a href="/sp/game/fe/">ファイアーエムブレム サイファ</a></li>'
+      + '<li><a href="/sp/game/poc/">ポケモンカードゲーム</a></li>'
+      + '<li><a href="/sp/game/ygo/">遊戯王 OCG</a></li>'
+      + '<li><a href="/sp/game/dm/">デュエル・マスターズ</a></li>'
+      + '<li><a href="/sp/game/kan/">艦これ アーケード</a></li>'
+      + '<li><a href="/sp/game/dcd/">スーパードラゴンボールヒーローズ</a></li>'
+      + '<li><a href="/sp/game/sanac/">三国志大戦 攻略</a></li>'
+      + '<li><a href="/sp/game/supply/">サプライ</a></li>'
+      + '<li><a href="/sp/game/supply/result.php?genre=just_loader">ジャストローダー</a></li>'
+      + '<li class="white"><a href="/sp/member/mypage.php">マイページ(ログイン)</a></li>'
+      + '<li class="white"><a href="/sp/info/">インフォメーション</a></li>'
+      + '<!-- .menu-list --></ul><!-- /.container-menulist --></div>'
+      + '<!-- /.header-menu --></div>';
+
+    $(this).append(menuDOM);
+  };
+
+  $(function () {
+    $('body').appendMenuElement();
+    $('.header-menu').hide();
+
+    $('#menuToggle').on('click',function(){
+      $('.header-menu').show();
+      $(this).slideMenu();
+    });
+
+    $('#siteLogo + a').on('click',function(e){
+      if($('.header-menu').css('display') == 'block'){
+        e.preventDefault();
+      }
+    });
+
+  });
+}(window, document, $));
+(function (win, doc, $, undefined) {
+  'use strict';
+
+  var contentHeight = [],
+  paddingHeight = [];
+
+  var isAndroid = win.navigator.userAgent.indexOf('Android') > 0;
+
+  $.fn.changeDefaultClass = function (hash) {
+    var $this = $(this);
+  
+    $this.each(function (){
+      if ($(this).attr('id') === hash) {
+        $(this).removeClass('close').addClass('open');
+      } else {
+        $(this).removeClass('open').addClass('close');
+      }
+    });
+  };
+
+  //コンテンツの高さの取得
+  $.fn.setContentHeight = function () {
+    var $this = $(this);
+    var index = $('.tglAcrd').parent().find('.contents').index($this);
+  
+    $this.css({display:'block','height':'auto'});
+    contentHeight[index] = $this.height();
+    paddingHeight[index] = $this.css('padding-top');
+
+    $this.css('height', $this.height() + 'px');
+  };
+
+
+  $.fn.hideContent = function () {
+    var $this = $(this);
+    
+    $this.css({
+      display: 'none',
+      overflow: 'hidden',
+      paddingTop: '0px',
+      paddingBottom: '0px',
+      height: '0px'
+    });
+  };
+
+  //アイコンのトグル
+  $.fn.tglAcrdIcon = function() {
+    var $this = $(this);
+  
+    if ($this.hasClass('close')) {
+      $this.removeClass('close').addClass('open');
+    }
+    else if ($this.hasClass('open')) {
+      $this.removeClass('open').addClass('close');
+    }
+  };
+
+  //アコーディオンの開閉
+  $.fn.tglAccordion = function(index){
+    var $this = $(this),
+        $target = $(this).parent().find('.contents'),
+        headerHeight = $('#siteLogo').height(),
+        scrollTo = $this.offset().top - headerHeight;
+    
+    if ($this.hasClass('close')) {
+      $target.slideDown(index);        
+      // コンテンツの位置を画面中央によせる
+      tglScroll(scrollTo, 400);
+    }
+    else if ($this.hasClass('open')) {
+      $target.slideUp(index);
+    }
+  }
+
+  $.fn.slideDown = function(index) {
+    var $this = $(this);
+    $this.css({display:'block','height':'auto'});
+    contentHeight[index] = $this.height();
+    $this.css({'height':0});
+    $this.animate({
+      height: contentHeight[index] + 'px',
+      paddingTop: paddingHeight[index],
+      paddingBottom: paddingHeight[index]
+    }, 400, 'ease-out',function(){
+        $this.css({display:'block',height: 'auto'});
+    });
+  };
+
+  $.fn.slideUp = function(index) {
+    var $this = $(this);
+  
+    $this.animate({
+      height: '0px',
+      paddingTop: '0px',
+      paddingBottom: '0px'
+    }, 400, 'ease-in',function(){ $this.css({ display: 'none' }); });
+
+  };
+
+
+  var tglScroll = function(scrollTo, time) {
+    var scrollFrom = parseInt(document.body.scrollTop),
+        i = 0,
+        runEvery = 5; // run every 5ms
+
+    scrollTo = parseInt(scrollTo);
+    time /= runEvery;
+    
+    var interval = setInterval(function () {
+        i++;
+        
+        document.body.scrollTop = (scrollTo - scrollFrom) / time * i + scrollFrom;
+       
+        if (i >= time) {
+            clearInterval(interval);
+        }
+    }, runEvery);
+  };
+
+  //初期設定
+  var init = function(){
+   var urlhash = win.location.hash;
+
+    if (urlhash) {
+      $('.tglAcrd').changeDefaultClass(urlhash.substr(1));
+    }
+
+    $('.tglAcrd').parent().find('.contents').each(function(){
+      var $this = $(this);
+      $this.setContentHeight();
+      
+      if (isAndroid) { $this.css('font-size', 12); }
+      
+      if ($this.parent().find('.tglAcrd').hasClass('close')) {
+        $this.hideContent();
+      } else { 
+          $this.css({
+              'overflow':'auto',
+              'height' : 'auto',
+              'display': 'block'
+              }); 
+      }
+    });
+  }
+
+  $(function () {
+    var bodyElm = $('body')[0];    
+
+    Deferred.next(window.resizeEvent)
+    .next(function(){
+      init();
+ 
+      $('.tglAcrd').on('click', function () {
+        var $this = $(this);
+        var index = $('.tglAcrd').index($(this));
+
+        $this.tglAccordion(index);
+        $this.tglAcrdIcon();
+      });
+      
+      /* 検索結果の販売、買取ボタンを押された場合 */
+      var $filtering = $('.filtering');
+      $filtering.find('a').on('click', function (e) {
+        if($(this).attr('href') == '#'){
+          e.preventDefault();
+          var $target = $filtering.find('.contents');
+          var $acdbtn = $filtering.find('.tglAcrd');
+          
+          if ($acdbtn.hasClass('close')) {
+            $target.slideDown(0);
+            $acdbtn.removeClass('close').addClass('open');
+          }
+        }
+      });      
+      
+    });
+    
+    $('a').on('click',function(){
+      var linkUrl = $(this).attr('href');
+      if(linkUrl.indexOf('#') == 0){
+        if($(linkUrl).hasClass('tglAcrd')){
+          var $this = $(linkUrl),
+              $target = $this.parent().find('.contents'),
+              index = $('.tglAcrd').index($(linkUrl)),
+              headerHeight = $('#siteLogo').height(),
+              scrollTo = $this.offset().top - headerHeight;
+                  
+              $this.removeClass('close').addClass('open');
+              tglScroll(scrollTo, 400);        
+              $target.slideDown(index);
+            }
+          }
+    });        
+    
+  });
+
+}(window, document, $));
+(function(win, doc, $){
+	function setFlipSnap(){
+		var flipsnap = Flipsnap('.cardlist', {
+			distance: 122
+		});
+		var $next = $('.next').click(function() {
+			flipsnap.toNext();
+		});
+		var $prev = $('.prev').click(function() {
+			flipsnap.toPrev();
+		});
+    
+		flipsnap.element.addEventListener('fsmoveend', function() {
+		  
+		  if(!flipsnap.hasNext()){
+		    hideNext();
+        showPrev();
+		  }else if(!flipsnap.hasPrev()){
+		    hidePrev();
+        showNext();
+		  }else {
+		    showNext();
+		    showPrev();
+		  }
+			$next.attr('disabled', !flipsnap.hasNext());
+			$prev.attr('disabled', !flipsnap.hasPrev());
+		}, false);
+	}
+  
+  function hideNext(){
+    $('.next').css("display", "none");
+    $('.overlay-R').css("display", "none");    
+  }
+  
+  function hidePrev(){
+    $('.prev').css("display", "none");
+    $('.overlay-L').css("display", "none");
+    cont = 0;
+  }
+
+  function showNext(){
+    $('.next').css("display", "block");
+    $('.overlay-R').css("display", "block");
+  }  
+  function showPrev(){
+    $('.prev').css("display", "block");
+    $('.overlay-L').css("display", "block");  
+  }
+   
+
+	$(function () {
+	  if($(".now-popularity-card").length || $(".now-popularity-supply").length){
+      var slideAreaWidth = function(){ 
+        var eleNum = $('.card-area').length;
+        var areaWidth = 122 * eleNum;
+        $('.cardlist').css("width", areaWidth+"px");
+      }();
+      setFlipSnap();	
+	  }
+	});
+})(window, document, $);
+(function (window, document, $, undefined) {
+  'use strict';
+
+  var tglFav = function tglFav(self){
+    //カードの情報を取得
+    var url = $(self).attr('href');
+    var hash = /gid=.+/.exec(url);
+    hash = hash.toString();
+    var data = {};
+    var referer;
+
+    var tmp = hash.split('&');
+    tmp.forEach(function (val) {
+      var t = val.split('=');
+      data[t[0]] = t[1];
+    });
+
+    var nowurl = location.href;
+    if(nowurl.indexOf("buy_price.php?ver=buysp") > -1 || nowurl.indexOf("result.php") > -1 ||nowurl.indexOf("sale_tokka.php") > -1){
+      referer = nowurl + '&show=detail';
+    }else {
+      referer = nowurl;
+    }
+
+    data['referer'] = referer;
+
+    $.ajax({
+      type: 'GET',
+      url: '/sp/favorite/update.php',
+      data: data,
+      success: function(success){
+        var val = JSON.parse(success);
+
+        if($('#favorite').length){
+          //削除
+          if(val.success){
+            var ProgressNum,progressAll,i,numerator;
+            //リストの削除
+            $(self).parent('li').remove();
+            progressAll = $('.card-list').find('li').length;
+            $('#nowNum').text(progressAll);
+            $('.progress-all').text(String(progressAll));
+
+            //リスト内の数字の変更
+            setTimeout(function(){
+              for(i = 0;i < progressAll;i++){
+                $($('.progress-nowcount')[i]).text(i+1);
+              }
+            },0);
+
+          }
+        } else {
+          if(val.success){
+            $(self).toggleClass('current');
+          } else if('url' in val) {
+            location.href = val.url;
+          } else if('result' in val){
+            alert('お気に入りは全部で３０個です！一覧ページで整理してください。');
+          }
+        }
+      },
+      error: function(xhr, type){ alert(type);   },
+      complete: function( jqXHR, textStatus ) { }
+    });
+
+  }
+
+  $(function () {
+    if($('#favorite').length){
+    $('.btn-fav').on('click',function(){
+      if(window.confirm('この商品をお気に入りから解除しますか？')){
+        event.preventDefault();
+        tglFav(this);
+      }else{
+        event.preventDefault();
+      }
+      });
+    }else {
+      $('.btn-fav').on('click',function(event){
+        event.preventDefault();
+        tglFav(this);
+      });
+    }
+
+
+  });
+}(window, document, $));(function (window, document, $, undefined) {
+  'use strict';
+
+  var appendOverlay = function () {
+    var $dom = $('<div class="modal-overlay"></div>');
+    $dom.appendTo('body');
+  };
+
+  var appendModal = function() {
+    var $modal = $('<div class="modal m-search-result"><header class="modal-header"><h1 class="modal-title"></h1><p>を追加しました</p><!-- /.modal-header --></header><dl class="modal-cart-count"><dt>カート内の点数</dt><dd><span></span>点</dd><!-- /.modal-cart-count --></dl><dl class="modal-subtotal"><dt>小計</dt><dd><span></span>円</dd><!-- /.modal-subtotal --></dl><div class="btn continue-s close-modal"><a href="#">買い物を続ける</a><!-- /.btn.continue-s --></div><dl class="modal-total"><dt>カート内の合計金額</dt><dd><span></span>円</dd><!-- /.modal-total --></dl><div class="btn cart-see"><a href="/sp/sell_cart/cart.php" target="_parent">カートを見る</a><!-- /.btn.cart-see --></div><!-- /.modal --></div>')
+    $modal.appendTo('body');
+  }
+
+  var appendModalDelivery = function(){
+    var $modal = $('<div class="modal m-sellcart-mail"><div class="close-modal"></div><header class="page-title modal-header"><h1 id="sellcartMailPopupTitle" class="modal-title"><span>メール便/メール便(速達)のご案内</span></h1><!-- /.modal-header --></header><div class="block-modal"><div class="icon some-cases-mail"></div><div class="mail-content"><h3>メール便発送可</h3><p>ただし、数量によってメール便発送が不可になる商品です。</p><!-- /.mail-content --></div><!-- /.block-modal --></div><div class="block-modal"><div class="icon not-mail"></div><div class="mail-content"><h3>メール便発送不可</h3><!-- /.mail-content --></div><!-- /.block-modal --></div><!-- /.modal --></div><!-- /modal DOM -->')
+    $modal.appendTo('body');
+  }
+
+  /**
+   * @param {ZeptoObject} element
+   */
+  var elmCentering = function (element) {
+    var $elm = element,
+    $win = $(window);
+    var win = {
+      w: $win.width(),
+      h: $win.height()
+    },
+    elm = {
+      w: $elm.width(),
+      h: $elm.height()
+    },
+    scr = {
+      x: document.body.scrollLeft || window.pageXOffset,
+      y: document.body.scrollTop || window.pageYOffset
+    };
+
+    $elm.css({
+      top: '50%',
+      marginTop: -(elm.h/2)
+    });
+  };
+
+  var openModal = function (view) {
+    var $modal = $(view);
+
+    $('.modal-overlay').css({
+      position: 'fixed'
+    });
+
+    $modal.show();
+    $('body').addClass('view-modal');
+    $('.modal-overlay').addClass('show');
+    elmCentering($modal);
+  };
+
+  var closeModal = function () {
+    $('.modal-overlay').css({
+      position: 'static'
+    });
+    $('.modal').hide();
+    $('body').removeClass('view-modal');
+    $('.modal-overlay').removeClass('show');
+  };
+
+  var modalDiscrimination = function(url){
+    $.ajax({
+      type: 'GET',
+      url: url,
+      success: function(json){
+        var obj = JSON.parse(json);
+        if(obj.success == false && obj.url.indexOf('sell') > -1){
+          alert('申し訳ございません。\n注文可能点数を超えているため、これ以上は注文できません。');
+        }else if(obj.success == false && obj.url.indexOf('buy') > -1){
+          alert('申し訳ございません。\n注文可能点数を超えているため、これ以上は注文できません。');
+        }else {
+          modalDataGet(obj.url);
+        }
+      }
+    })
+  };
+
+  var modalDataGet = function(dataUrl){
+    var url = dataUrl.replace('cart.php','cart_data.php');
+    var hash = /gid=.+/.exec(url);
+    hash = hash.toString();
+    var data = {};
+
+    var tmp = hash.split('&');
+
+    tmp.forEach(function (val) {
+      var t = val.split('=');
+      data[t[0]] = t[1];
+    });
+
+
+    $.ajax({
+      type: 'GET',
+      url: url,
+      contentType: 'application/json',
+      data: data,
+      success: function(data){
+        var obj = JSON.parse(data);
+        var nowUrl = location.href;
+
+        //文言を挿入
+        $('h1.modal-title').text(obj.name);
+        $('dl.modal-cart-count span').text(obj.num);
+        $('dl.modal-subtotal span').text(obj.subtotal);
+        $('dl.modal-total span').text(obj.total);
+        if(nowUrl.indexOf('sell') > -1){
+          $('.cart-see').find('a').attr('href','/sp/sell_cart/cart.php?' + hash);
+        }else if(nowUrl.indexOf('buy') > -1){
+          $('.cart-buy-see').find('a').attr('href','/sp/buy_cart/cart.php?' + hash);
+        }
+      }
+    });
+
+    openModal('.m-search-result');
+  }
+
+  $(function () {
+    if(location.href.indexOf("/game/") > -1 || location.href.indexOf("cart.php") > -1 || location.href.indexOf("/favorite/") > -1 ){
+      appendModal();
+      if(location.href.indexOf("buy") > -1){
+        $('dl.modal-cart-count dt').text('見積もり中の点数');
+        $('dl.modal-total dt').text('買取リストの合計金額');
+        $('.m-search-result .continue-s').addClass('continue-buy');
+        $('.m-search-result .cart-see').addClass('cart-buy-see');
+      }
+
+      if($('.block-cart').length){
+        appendModalDelivery();
+      }
+      appendOverlay();
+    }
+
+    $('.open-modal').on('click', function (event) {
+      event.preventDefault();
+      var address = $(this).find('a').attr('href');
+      modalDiscrimination(address);
+    });
+
+    $('.open-delivery-modal').on('click', function (event) {
+      openModal('.m-sellcart-mail');
+    });
+
+    $('.close-modal').on('click', function (event) {
+      event.preventDefault();
+      closeModal();
+    });
+  });
+}(window, document, $));
+(function (window, document, $, undefined) {
+  'use strict';
+
+  $(function () {
+    var $front = $('.card-image-front'),
+        $back = $('.card-image-back');
+
+    $back.hide();
+    if($("#showBackImg").length){
+      $('#showBackImg , .card-image-front .card-image').on('click', function () {
+        $front.hide();
+        $back.show();
+      });
+      $('#showFrontImg , .card-image-back .card-image').on('click', function () {
+        $back.hide();
+        $front.show();
+      });
+    }
+
+
+  });
+}(window, document, $));
+(function (window, document, $, undefined) {
+  'use strict';
+  
+  var startX,startY,diffX,diffY,absX,absY,scrolljuge;
+  
+  var touchHandler = function(e){
+    var touch = e.touches[0];
+    var nextPageURL = $('a.next').attr('href');
+    var prevPageURL = $('a.preview').attr('href');
+    
+    if(e.type == "touchstart"){
+      //スタート時の座標を取得
+      startX = touch.pageX;
+      startY = touch.pageY;
+      //console.log(startX);
+    }
+    else if(e.type == "touchmove"){
+      //スライド時のX座標 - 開始時のX座標 = 移動距離（ diffX ）
+      diffX = touch.pageX - startX;
+      diffY = touch.pageY - startY;
+      absX = Math.abs(diffX);
+      absY = Math.abs(diffY);
+      scrolljuge = absY - absX;
+      console.log(scrolljuge);
+      if(scrolljuge < 0){
+        e.preventDefault();
+      }
+    }
+    else if (e.type == "touchend") {      
+      if (diffX > 100 && scrolljuge < 0) { //右に100px以上移動したか
+        if ( prevPageURL ) { //移動先のページがあれば、移動
+          e.preventDefault();
+          location.href = prevPageURL;
+        }
+      } else if (diffX < -100 && scrolljuge < 0) { //左に100px以上移動したか 
+        if ( nextPageURL ) { //移動先のページがあれば、移動
+          e.preventDefault();
+          location.href = nextPageURL;
+        }
+      }else {
+        
+      }
+      
+    }
+  }
+  
+  
+  $(function(){
+    //alert('swipejump');
+    $('.card-image').bind("touchstart touchmove touchend" , touchHandler);
+  });
+  
+}(window, document, $));
