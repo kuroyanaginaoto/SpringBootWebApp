@@ -37,7 +37,7 @@
 
   <div class="maincol">
   	<h2>List</h2>
-  	<div class="item-box">
+ <!--	<div class="item-box">
   		<img src="image/ws.kirito&asuna.sp.jpg" alt="商品" class="item-img">
   		<div class="item-name">再開の時 アスナ</div>
   		<div class="item-price">\54.800</div>
@@ -55,7 +55,7 @@
   		<div class="item-price">\19.800</div>
   		<button>詳しく見る</button>
   	</div>
-
+-->
 
   	<%List<TrSellItemsEntity> sellItemsList = (List<TrSellItemsEntity>)session.getAttribute("sellItemsList");
   	for (int i =0; i<sellItemsList.size(); i++){
@@ -63,7 +63,7 @@
   	 <div class = "item-box">
   	 	<img src="image/<%= entity.getSellItemsImageFileName1() %>" alt ="商品" class="item-img">
   	 	 <div class="item-name"><%= entity.getSellItemsName() %></div>
-  	 	 <div class ="items-price"><%= entity.getSellItemsPrice() %></div>
+  	 	 <div class ="item-price"><%= entity.getSellItemsPrice() %></div>
   	 	 <button>詳しく見る</button>
   	  </div>
   	  <% } %>
