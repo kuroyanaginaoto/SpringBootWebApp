@@ -1,0 +1,114 @@
+(function(win, doc, $) {
+    'use strict';
+
+    var $html, $body, $main;
+
+    // Entry point.
+    main();
+
+    /**
+     * main()
+     * Main routine.
+     */
+    function main() {
+
+        // Set "Enabled JavaScript" mark.
+        $html = $(doc.documentElement);
+        $html.addClass('enable_js');
+
+        // Set JavaScript process progress.
+        $html.addClass('js_processing');
+
+        $(function() {
+            $body = $(doc.body);
+            $main = $('#main');
+            asyncExec(initSidebar);
+        });
+
+        /**
+         * asyncExec(func, args...)
+         * Execute a function asynchronously to avoid blocking other process when the execution time of the function is long.
+         */
+        function asyncExec(func) {
+            var args = Array.prototype.slice.call(arguments, 1);
+
+            setTimeout(function() {
+                func.apply(null, args);
+            }, 0);
+        }
+
+    }
+
+
+    function initSidebar() {
+				if (doc.location.href.indexOf('/info')>0 || doc.location.href.indexOf('/info_new/')>0){
+	        var $navBox = $('#side_info .sidebar .nav_box');
+				}else if (doc.location.href.indexOf('/game_sanac')>0){
+	        var $navBox = $('#side_sanac .sidebar .nav_box');
+				var $parent = $('.item_blog');
+				$parent.addClass('selected');
+				}else if (doc.location.href.indexOf('/new_simulator/sanac')>0){
+	        var $navBox = $('#side_sanac .sidebar .nav_box');
+				var $parent = $('.item_blog');
+				$parent.addClass('selected');
+				}else if (doc.location.href.indexOf('/blog/sanac')>0){
+	        var $navBox = $('#side_sanac .sidebar .nav_box');
+				}else{
+	        var $navBox = $('#side .sidebar .nav_box');
+				}
+
+
+        if ($navBox.length == 0) return;
+
+        setCurrentMenu();
+        setTabButtonsEvent();
+        setMenuButtonsEvent();
+
+        function setCurrentMenu() {
+            var $menuLinks = $navBox.find('a[href]'),
+                currentPagePath = location.pathname + location.search,
+                $anchor, href,
+                i, len = $menuLinks.length;
+
+            for (i = 0; i < len; ++i) {
+                $anchor = $menuLinks.eq(i);
+                href = $anchor.attr('href');
+
+                if (href === currentPagePath) {
+                    setCurrentMenuByAnchor($anchor);
+                    break;
+                }
+            }
+
+            function setCurrentMenuByAnchor($anchor) {
+                var $rootNavList = $anchor.closest('.nav_list'),
+                    currentTabKey = $rootNavList.attr('data-class'),
+                    $currentListItems = $anchor.parents('.nav_list li');
+
+                $currentListItems.addClass('selected');
+                $navBox.attr('data-current', currentTabKey);
+            }
+        }
+
+        function setTabButtonsEvent() {
+            $navBox.children('.label').each(function() {
+                var $label = $(this),
+                    key = $label.attr('data-class');
+
+                $label.on('click', function() {
+                    $navBox.attr('data-current', key);
+                });
+            });
+        }
+
+        function setMenuButtonsEvent() {
+            $navBox.on('click', 'a.parent', function(evt) {
+                var $a = $(evt.currentTarget),
+                    $li = $a.parent();
+
+                $li.toggleClass('selected');
+            });
+        }
+    }
+
+}(window, document, jQuery));

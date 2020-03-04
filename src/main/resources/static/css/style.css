@@ -1,20 +1,20 @@
 header {
 	position: relative;
 	height: 50vh;
-	background: url(../image/metaru.jpg) center / cover;
+	background: url(../image/home1.jpg) center / cover;
 }
 
-header h1 { 
+header h1 {
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
 	width: 100%;
-	text-align: center; 
-	color:#ededed;
+	text-align: center;
+	color:#7f2828;
 	font-size:9em;
 	font-family: Monotype Corsiva;
 	}
-	
+
 header nav ul{
 	position: absolute;
 	bottom: 0;
@@ -23,7 +23,7 @@ header nav ul{
 	background-color: rgba(255,255,255, 0.5);
 	display: flex;
 	}
-	
+
 header nav ul li {
 	width: 20%;
 	}
@@ -34,7 +34,7 @@ header nav ul li a{
 	line-height: 60px;
 	color: #000000;
 	}
-	
+
 header nav ul li a:hover{
 	opacity: 0.5;
 	}
@@ -43,28 +43,28 @@ main {
 	display: flex;
 	background: #1f1f1f;
 	}
-	
+
 main h2{
 	font-size: 2em;
 	margin: 0 0 30px 5px;
 	color: #eeeeee;
 	}
-	
+
 main .sidebar {
 	width: 450px;
 	}
-	
+
 main .sidebar ul{
 	list-style: none;
 	}
-	
+
 main .sidebar ul li a {
 	text-decoration: none;
 	font-size: 20px;
 	line-height: 40px;
 	color: #fff;
 	}
-	
+
 main .sidebar ul li a:hover{
 	opacity: 0.5;
 	}
@@ -126,4 +126,3 @@ footer ul li a {
     color: #fff;
 }
 
-	
