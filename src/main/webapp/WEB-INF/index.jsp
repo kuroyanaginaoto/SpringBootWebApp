@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri=""http://java.sun.com/jsp/jstl/core" prefix="C" %>
 
     <%@ page import="java.util.List" %>
     <%@ page import="net.code.TrSellItemsEntity" %>
@@ -57,16 +58,16 @@
   	</div>
 -->
 
-  	<%List<TrSellItemsEntity> sellItemsList = (List<TrSellItemsEntity>)session.getAttribute("sellItemsList");
-  	for (int i =0; i<sellItemsList.size(); i++){
-  	 TrSellItemsEntity entity = sellItemsList.get(i);%>
+<c:forEach items = "${SellItemsList}" var="items">
   	 <div class = "item-box">
-  	 	<img src="image/<%= entity.getSellItemsImageFileName1() %>" alt ="商品" class="item-img">
-  	 	 <div class="item-name"><%= entity.getSellItemsName() %></div>
-  	 	 <div class ="item-price"><%= entity.getSellItemsPrice() %></div>
-  	 	 <button>詳しく見る</button>
+  	 	<img src="image/${items.sellItemsImageFileName1}" alt ="商品" class="item-img">
+  	 	 <div class="item-name">${items.sellItemsName}</div>
+  	 	 <div class ="item-price">${items.sellItemsPrice}</div>
+  	 	 <button
+  	 	 onclick="location.href='/items/${items.sellItemsNum}'">詳しく見る</button>
   	  </div>
-  	  <% } %>
+ </c:forEach>
+
   </main>
   <footer>
   	<ul>
