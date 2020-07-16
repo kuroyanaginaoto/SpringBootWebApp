@@ -101,6 +101,24 @@ main .maincol button:hover {
 	cursor: pointer;
 	}
 
+main .maincol .item-box-detail{
+	deisplay: flex;
+}
+
+main .maincol .item-box-detail .item-img{
+	width: 300px;
+	border-radius: unset;
+	border: none;
+	object-fit: cover;
+}
+
+main maincol .item-box-detail .detail-container{
+	color:#707070;
+	line-height:30px;
+	font-size: 1.2em;
+	margin-left: 20px;
+}
+
 footer{
     width: 100%;
     background-color: #333333;

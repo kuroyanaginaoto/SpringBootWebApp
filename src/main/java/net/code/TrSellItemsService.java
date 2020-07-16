@@ -15,4 +15,8 @@ public class TrSellItemsService {
 		return sellItemsRepository.findAll();
 
 	}
+	public TrSellItemsEntity getOne(int id) {
+
+		return sellItemsRepository.getOne(id);
+	}
 }
