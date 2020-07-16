@@ -30,7 +30,7 @@ public class AppController {
 
 		model.addAttribute("sellItemsList",sellItemsList);
 
-		return "/items";
+		return "items";
 	}
 
 
